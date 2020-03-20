@@ -3,7 +3,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Flask Auth Example</title>
+    <title>Stock analysis</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.min.css"/>
 </head>
 
@@ -11,22 +11,37 @@
 <section class="hero has-background-light is-fullheight">
 
     <div class="hero-head">
-        <nav class="navbar davbar-fixed-top">
+        <nav class="navbar navbar-fixed-top">
             <div class="container">
 
                 <div id="navbarMenuHeroA" class="navbar-menu">
-                    <div class="navbar-start">
-                        <a href=/ class="navbar-item">
-                            <b>financel service</b>
-                        </a>
-                    </div>
                     <div class="navbar-end">
                         <a href="/" class="navbar-item">
                             Home
                         </a>
-                        <a href="/login" class="navbar-item">
-                            Login
-                        </a>
+                        {% if current_user.is_authenticated %}
+                            <nav class="navbar" role="navigation" aria-label="dropdown navigation">
+                            <div class="navbar-item has-dropdown is-hoverable">
+                                <a class="navbar-link">
+                                    <img src="static/user.png">
+                                </a>
+                                <div class="navbar-dropdown">
+                                    <a class="navbar-item">
+                                    quandl: {{current_user.id}}
+                                    </a>
+                                    <a class="navbar-item">
+                                        <a href="/logout" class="navbar-item">
+                                            Logout
+                                        </a>
+                                    </a>
+                                </div>
+                            </div>
+                            </nav>
+                        {% else %}
+                            <a href="/login" class="navbar-item">
+                                Login
+                            </a>
+                        {% endif %}
                     </div>
                 </div>
             </div>

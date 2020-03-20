@@ -3,9 +3,11 @@ from flask_login import LoginManager, UserMixin
 
 from .main import main as main_blueprint
 from .auth import auth as auth_blueprint
+from .auth import User
 
 def create_app():
     app = Flask(__name__)
+    app.secret_key = "secret_keyyyy"
 
     # login処理
     login_manager = LoginManager()
@@ -13,15 +15,15 @@ def create_app():
     login_manager.init_app(app)
 
     @login_manager.user_loader
-    def load_user():
-        returnUser.get()
+    def load_user(user_id):
+        user = User()
+        user.id = user_id
+        return user
 
     app.register_blueprint(main_blueprint)
     app.register_blueprint(auth_blueprint)
 
     return app
 
-class User(UserMixin):
-    pass
 
 app = create_app()
