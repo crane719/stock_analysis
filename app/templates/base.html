@@ -15,10 +15,18 @@
             <div class="container">
 
                 <div id="navbarMenuHeroA" class="navbar-menu">
-                    <div class="navbar-end">
-                        <a href="/" class="navbar-item">
-                            Home
+                    <div class="navbar-brand">
+                        <a href="/" div class="navbar-item">
+                            <b>Stock Analysis</b>
                         </a>
+                    </div>
+                    <div class="navbar-start">
+                        <a href="/timeseries" class="navbar-item">
+                            timeseries
+                        </a>
+                    </div>
+
+                    <div class="navbar-end">
                         {% if current_user.is_authenticated %}
                             <nav class="navbar" role="navigation" aria-label="dropdown navigation">
                             <div class="navbar-item has-dropdown is-hoverable">

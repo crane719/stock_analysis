@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block content %}
+<link rel=stylesheet type=text/css href="{{ url_for("static", filename='form.css') }}">
+
+<div class="columns is-fullheight">
+  <div class="column is-2 is-sidebar-menu is-hidden-mobile">
+    <aside class="menu">
+  <p class="menu-label">
+    Stock
+  </p>
+  <ul class="menu-list">
+    <form action="/login_post" method="POST">
+      <input type="text" name="key" placeholder="add new stock" required>
+      <input type="submit" value="Send">
+    </form>
+  </ul>
+</aside>
+  </div>
+    <div class="column is-main-content">
+    {% if current_user.is_authenticated %}
+        Main content
+    {% else %}
+        <h1 class="title">
+            Warning
+        </h1>
+        <h2 class="subtitle">
+            please login quandl api key....
+        </h2>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
