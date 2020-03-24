@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <link rel=stylesheet type=text/css href="{{ url_for("static", filename='form.css') }}">
 
 <div class="columns is-fullheight">
@@ -10,9 +11,9 @@
     Stock
   </p>
   <ul class="menu-list">
-    <form action="/login_post" method="POST">
-      <input type="text" name="key" placeholder="add new stock" required>
-      <input type="submit" value="Send">
+    <form action="" id="get_barnd">
+    <p class="text"><input type="text" value="" id="brand" placeholder="add new stock" /></p>
+    <p class="submit"><input type="submit" value="submit" /></p>
     </form>
   </ul>
 </aside>
@@ -22,7 +23,7 @@
         Main content
     {% else %}
         <h1 class="title">
-            Warning
+            <font color="red">Warning</font>
         </h1>
         <h2 class="subtitle">
             please login quandl api key....
@@ -31,3 +32,8 @@
   </div>
 </div>
 {% endblock %}
+
+$(function(){
+$("#get_brand").submit(function(){
+  var text = $("#brand").val();
+});
