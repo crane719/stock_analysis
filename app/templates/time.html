@@ -1,28 +1,31 @@
 {% extends "base.html" %}
-
 {% block content %}
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<link rel=stylesheet type=text/css href="{{ url_for("static", filename='form.css') }}">
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<link rel=stylesheet type=text/css href="<< url_for("static", filename='css/time.css') >>">
 
-<div class="columns is-fullheight">
+<div class="columns is-fullheight" id=get_brand>
   <div class="column is-2 is-sidebar-menu is-hidden-mobile">
     <aside class="menu">
   <p class="menu-label">
     Stock
   </p>
   <ul class="menu-list">
-    <form action="" id="get_barnd">
-    <p class="text"><input type="text" value="" id="brand" placeholder="add new stock" /></p>
-    <p class="submit"><input type="submit" value="submit" /></p>
+    <form action="">
+    <p class="menu-label">add new stock...</p>
+    <p class="text"><input type="text" placeholder="add new stock" v-model="brand" /></p>
+    <p class="submit"><button @click="getTimeSeries">submit</button></p>
     </form>
   </ul>
 </aside>
   </div>
     <div class="column is-main-content">
     {% if current_user.is_authenticated %}
+            {{brand}}
         Main content
     {% else %}
         <h1 class="title">
+            {{brand}}
             <font color="red">Warning</font>
         </h1>
         <h2 class="subtitle">
@@ -31,9 +34,29 @@
     {% endif %}
   </div>
 </div>
+
+<script>
+new Vue({
+    el: "#get_brand",
+    data: {
+	  timeseries:"",
+	  brand:"TSE/"
+    },
+    methods:{
+	   getTimeSeries:function(){
+	   const path="http://localhost:5000/get_time"
+       var brand = this.brand
+       axios.get(path, {params:{brand: brand}})
+	   .then((res)=>{
+	    this.msg=res.data;
+		 console.log("hello");
+	   })
+	   .catch((error)=>{
+	     console.error("error");
+	   });
+    },
+},
+})
+</script>
 {% endblock %}
 
-$(function(){
-$("#get_brand").submit(function(){
-  var text = $("#brand").val();
-});

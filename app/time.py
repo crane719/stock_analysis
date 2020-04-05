@@ -1,4 +1,5 @@
 from flask import Blueprint, render_template, request
+from flask_login import login_required, current_user
 import finance
 
 time = Blueprint('time', __name__)
@@ -8,10 +9,9 @@ def timeseries():
     return render_template('time.html')
 
 @time.route('/get_time', methods=["GET"])
+@login_required
 def get_timeseries():
-    print("aaaaaaa")
-    brand = request["brand"]
+    brand = request.args.get("brand")
     api = current_user.id
     times = finance.get(api, brand)
-    print(times)
     return times
