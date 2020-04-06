@@ -1,7 +1,12 @@
 {% extends "base.html" %}
 {% block content %}
 <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.26.0/babel.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-polyfill/6.26.0/polyfill.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/es6-promise@4/dist/es6-promise.auto.min.js"></script> 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.min.js"></script>
+<script src="https://unpkg.com/vue-chartjs/dist/vue-chartjs.min.js"></script>
 <link rel=stylesheet type=text/css href="<< url_for("static", filename='css/time.css') >>">
 
 <div class="columns is-fullheight" id=get_brand>
@@ -11,21 +16,20 @@
     Stock
   </p>
   <ul class="menu-list">
-    <form action="">
     <p class="menu-label">add new stock...</p>
     <p class="text"><input type="text" placeholder="add new stock" v-model="brand" /></p>
     <p class="submit"><button @click="getTimeSeries">submit</button></p>
-    </form>
   </ul>
 </aside>
   </div>
     <div class="column is-main-content">
     {% if current_user.is_authenticated %}
-            {{brand}}
+        {{timeseries}}
         Main content
     {% else %}
         <h1 class="title">
-            {{brand}}
+            <li v-for="time in timeseries" :key="time.id">
+            </li>
             <font color="red">Warning</font>
         </h1>
         <h2 class="subtitle">
@@ -36,24 +40,24 @@
 </div>
 
 <script>
-new Vue({
+vm = new Vue({
     el: "#get_brand",
     data: {
-	  timeseries:"",
+	  timeseries:[],
 	  brand:"TSE/"
     },
     methods:{
 	   getTimeSeries:function(){
-	   const path="http://localhost:5000/get_time"
-       var brand = this.brand
+	   const path="http://localhost:5000/get_time";
+       console.log("aaaa");
+       var brand = this.brand;
        axios.get(path, {params:{brand: brand}})
-	   .then((res)=>{
-	    this.msg=res.data;
-		 console.log("hello");
-	   })
-	   .catch((error)=>{
-	     console.error("error");
-	   });
+        .then(response=>{
+            console.log(response.data);
+            this.timeseries = response.data;
+            this.brand = "TSE/";
+        })
+        .catch(err=>{alert("入力された内容かapiが間違っています!")});
     },
 },
 })
