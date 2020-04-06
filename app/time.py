@@ -14,5 +14,6 @@ def get_timeseries():
     brand = request.args.get("brand")
     api = current_user.id
     times = finance.get(api, brand)
-    json = times.to_json()
-    return jsonify(json)
+    times.index = times.index.astype(str)
+    jsons = times["Low"].to_json(orient="split")
+    return jsonify(jsons)

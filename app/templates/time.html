@@ -24,8 +24,7 @@
   </div>
     <div class="column is-main-content">
     {% if current_user.is_authenticated %}
-        {{timeseries}}
-        Main content
+        <canvas id="myChart"></canvas>
     {% else %}
         <h1 class="title">
             <li v-for="time in timeseries" :key="time.id">
@@ -44,6 +43,8 @@ vm = new Vue({
     el: "#get_brand",
     data: {
 	  timeseries:[],
+      label:[],
+      title:"",
 	  brand:"TSE/"
     },
     methods:{
@@ -53,13 +54,30 @@ vm = new Vue({
        var brand = this.brand;
        axios.get(path, {params:{brand: brand}})
         .then(response=>{
-            console.log(response.data);
-            this.timeseries = response.data;
+            var obj = JSON.parse(response.data);
+            this.timeseries = obj["data"];
+            this.label = obj["index"];
+            console.log(this.label);
+            this.title = this.brand;
             this.brand = "TSE/";
         })
         .catch(err=>{alert("入力された内容かapiが間違っています!")});
+        },
     },
-},
+    watch:{ title: function() {
+      var ctx = document.getElementById('myChart').getContext('2d');
+      var myChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+          labels: this.label,
+          datasets: [{
+              label: this.title,
+              data: this.timeseries
+          }]
+        }
+      });
+    }
+    }
 })
 </script>
 {% endblock %}
