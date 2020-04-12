@@ -6,6 +6,8 @@
 <script src="https://unpkg.com/vue-chartjs/dist/vue-chartjs.min.js"></script>
 <link rel=stylesheet type=text/css href="<< url_for("static", filename='css/time.css') >>">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.min.css"/>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.min.js"></script>
+<script type="text/javascript" src="https://github.com/nagix/chartjs-plugin-colorschemes/releases/download/v0.2.0/chartjs-plugin-colorschemes.min.js"></script>
 
 <div class="columns is-fullheight" id=get_brand>
   <div class="column is-3 is-sidebar-menu">
@@ -82,7 +84,7 @@ vm = new Vue({
             var obj = JSON.parse(response.data);
             this.timeseries = obj["data"];
             this.label = obj["index"];
-            this.title = this.brand;
+            this.title = this.brand+"("+this.type+")";
             this.brand = "TSE/";
             this.is_readonly = true;
         })
@@ -103,7 +105,8 @@ vm = new Vue({
               labels: this.label,
               datasets: [{
                   label: this.title,
-                  data: this.timeseries
+                  data: this.timeseries,
+                  fill: false,
               }]
             }
           });
@@ -112,7 +115,10 @@ vm = new Vue({
           //this.myChart.data.datasets.forEach((dataset) => {
           //  dataset.data.push(this.timeseries);
           //});
-          this.myChart.data.datasets.push({label:this.title,data:this.timeseries});
+          this.myChart.data.datasets.push({
+              label:this.title,
+              data:this.timeseries,
+              fill:false});
           this.myChart.chart.update();
           console.log(this.myChart.data);
       }
