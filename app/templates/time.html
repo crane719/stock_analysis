@@ -27,13 +27,13 @@
   <p class="text"><input id="forms" type="text" placeholder="add new stock" v-model="brand" /></p>
   <p><input type="date" v-model="start_date" v-bind:readonly="is_readonly"></input>~
   <input type="date" v-model="end_date" v-bind:readonly="is_readonly"></input></p>
-  <p class="submit"><button @click="getTimeSeries">submit</button></p>
+  <p class="submit"><button @click="getTimeSeries">add</button></p>
 
   <p class="menu-label">delete displayed stock...</p>
   <select id="select" v-model="deleteTitle">
     <option v-for="title in deleteTitleList">{{title}}</option>
   </select>
-  <p class="submit"><button @click="deleteTimeSeries">submit</button></p>
+  <p class="submit"><button @click="deleteTimeSeries">delete</button></p>
 
   </aside>
   </div>
