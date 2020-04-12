@@ -5,18 +5,14 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.min.js"></script>
 <script src="https://unpkg.com/vue-chartjs/dist/vue-chartjs.min.js"></script>
 <link rel=stylesheet type=text/css href="<< url_for("static", filename='css/time.css') >>">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.min.css"/>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.min.js"></script>
 <script type="text/javascript" src="https://github.com/nagix/chartjs-plugin-colorschemes/releases/download/v0.2.0/chartjs-plugin-colorschemes.min.js"></script>
 
-<div class="columns is-fullheight" id=get_brand>
+<div class="columns is-desktop is-fullheight" id=get_brand>
   <div class="column is-3 is-sidebar-menu">
-    <aside class="menu">
-  <p class="menu-label">
-    Stock
-  </p>
-  <p class="menu-label">add new stock...</p>
+  <aside class="menu">
 
+  <p class="menu-label">add new stock...</p>
   <p>
   <input id="radio" name="stocktype" type="radio" value="Open" v-model="type" checked>
   <label>open</label>
@@ -29,13 +25,19 @@
   </p>
 
   <p class="text"><input id="forms" type="text" placeholder="add new stock" v-model="brand" /></p>
-
-  date range
   <p><input type="date" v-model="start_date" v-bind:readonly="is_readonly"></input>~
   <input type="date" v-model="end_date" v-bind:readonly="is_readonly"></input></p>
   <p class="submit"><button @click="getTimeSeries">submit</button></p>
-</aside>
+
+  <p class="menu-label">delete displayed stock...</p>
+  <select id="select" v-model="deleteTitle">
+    <option v-for="title in deleteTitleList">{{title}}</option>
+  </select>
+  <p class="submit"><button @click="deleteTimeSeries">submit</button></p>
+
+  </aside>
   </div>
+
     <div class="column is-main-content">
     {% if current_user.is_authenticated %}
         <div class="chart-container" stype="postion: relative; height:40; width:80">
@@ -60,6 +62,8 @@ vm = new Vue({
     data: {
 	  timeseries:[],
       label:[],
+      deleteTitleList: [],
+      deleteTitle: "",
       title:"",
 	  brand:"TSE/",
       type: "Open",
@@ -85,6 +89,7 @@ vm = new Vue({
             this.timeseries = obj["data"];
             this.label = obj["index"];
             this.title = this.brand+"("+this.type+")";
+            this.deleteTitleList.push(this.title);
             this.brand = "TSE/";
             this.is_readonly = true;
         })
@@ -92,6 +97,20 @@ vm = new Vue({
             this.brand = "TSE/";
             alert("入力された内容かapiが間違っています!");
         });
+        },
+        deleteTimeSeries:function(){
+            var deleteArg = 0;
+            console.log(this.deleteTitleList);
+            console.log(this.deleteTitle);
+            for(var iter=0; this.deleteTitleList.length; iter++){
+                if (this.deleteTitleList[iter]==this.deleteTitle){
+                    deleteArg=iter;
+                    break;
+                }
+            }
+            this.deleteTitleList.splice(deleteArg, 1);
+            this.myChart.data.datasets.splice(deleteArg, 1);
+            this.myChart.chart.update();
         },
     },
     watch:{ title: function() {
@@ -111,16 +130,11 @@ vm = new Vue({
             }
           });
       }else{
-          //this.myChart.data.labels.push(this.label);
-          //this.myChart.data.datasets.forEach((dataset) => {
-          //  dataset.data.push(this.timeseries);
-          //});
           this.myChart.data.datasets.push({
               label:this.title,
               data:this.timeseries,
               fill:false});
           this.myChart.chart.update();
-          console.log(this.myChart.data);
       }
     }
     }

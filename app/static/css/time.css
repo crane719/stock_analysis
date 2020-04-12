@@ -8,16 +8,11 @@
   background: darken(#f9f9f9, 10%);
   color: darken(#f9f9f9, 50%);
   text-align: left;
-  }
 }
 
-#radio {
+#select {
   float: left;
-  width: 80%;
-  margin: 0.5rem 0;
-  padding: 0.5rem 1rem;
-  border-radius: 0.3rem;
-  }
+  width: 90%;
 }
 
 input[readonly] {
@@ -25,3 +20,4 @@ input[readonly] {
 	background-color: #E2E8E7;
 	cursor: not-allowed;
 }
+
