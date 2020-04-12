@@ -1,119 +1,22 @@
-// Colours
-$green: #84AD47;
-$red: #AD4747;
-$blue: #4784AD;
-
-form {
-  width: 50%;
-  margin: 10% auto;
-  min-width: 9rem;
-}
-
-input, textarea {
+#forms {
   float: left;
-  width: 80%;
-  max-width: 80%;
+  width: 90%;
   border: none;
   margin: 0.5rem 0;
   padding: 0.5rem 1rem;
   border-radius: 0.3rem;
   background: darken(#f9f9f9, 10%);
   color: darken(#f9f9f9, 50%);
-
-  &[type=submit] {
-    background: $green;
-    color: #fff;
-    width: auto;
-    float: right;
-  }
-
-  &::placeholder {
-    color: darken(#f9f9f9, 50%);
-  }
-
-  &.error {
-    background: $red;
-    color: #fff;
-    &::placeholder {
-      color: darken($red, 60%);
-    }
-  }
-}
-textarea {
-  height: 10rem;
-}
-.captcha {
-  float:left;
-  input {
-    float: right;
-  }
-  input[name=question] {
-    width: 4rem;
-    border-top-right-radius: 0;
-    border-bottom-right-radius: 0;
-    text-align: right;
-    padding-right: 0;
-  }
-  [name=captcha] {
-    width: 5rem;
-    border-top-left-radius: 0;
-    border-bottom-left-radius: 0;
-    padding-left: 0.5rem;
-    &::placeholder {
-      text-align: center;
-    }
+  text-align: left;
   }
 }
 
-
-
-
-// Generic Styles ;)
-* {
-  box-sizing: border-box;
+#radio {
+  float: left;
+  width: 80%;
+  margin: 0.5rem 0;
+  padding: 0.5rem 1rem;
+  border-radius: 0.3rem;
+  }
 }
 
-@font-face {
-  font-family: 'Open Sans';
-  font-style: normal;
-  font-weight: 400;
-  src: local('Open Sans'), local('OpenSans'), url(http://themes.googleusercontent.com/static/fonts/opensans/v7/cJZKeOuBrn4kERxqtaUH3bO3LdcAZYWl9Si6vvxL-qU.woff) format('woff');
-}
-
-body {
-  padding: 2rem;
-  background: #f9f9f9;
-  color: #2f2f2f;
-  font-family: 'Open Sans';
-}
-
-
-
-#form2{
-position:relative;
-max-width:300px;	
-margin-bottom:20px;
-}
-#sbox2{
-height:50px;
-padding:0 10px; 
-position:absolute; 
-left:0;
-top:0; 
-border-radius:2px;
-outline:0;
-background:#eee;	
-}
-#sbtn2{
-height:50px;
-position:absolute; 
-left:255px;/*アイコン左右の位置調整*/
-top:0;
-background:none;
-color:#666;
-border:none;
-font-size:20px;/*アイコンサイズ*/
-}
-#sbtn5:hover{
-color:#7fbfff;
-}

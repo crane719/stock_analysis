@@ -2,29 +2,39 @@
 {% block content %}
 <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.26.0/babel.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-polyfill/6.26.0/polyfill.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/es6-promise@4/dist/es6-promise.auto.min.js"></script> 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.min.js"></script>
 <script src="https://unpkg.com/vue-chartjs/dist/vue-chartjs.min.js"></script>
 <link rel=stylesheet type=text/css href="<< url_for("static", filename='css/time.css') >>">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.min.css"/>
 
 <div class="columns is-fullheight" id=get_brand>
-  <div class="column is-2 is-sidebar-menu is-hidden-mobile">
+  <div class="column is-3 is-sidebar-menu">
     <aside class="menu">
   <p class="menu-label">
     Stock
   </p>
-  <ul class="menu-list">
-    <p class="menu-label">add new stock...</p>
-    <p class="text"><input type="text" placeholder="add new stock" v-model="brand" /></p>
-    <p class="submit"><button @click="getTimeSeries">submit</button></p>
-  </ul>
+  <p class="menu-label">add new stock...</p>
+
+  <p>
+  <input id="radio" name="stocktype" type="radio" value="Open" v-model="type" checked>
+  <label>open</label>
+  <input id="radio" name="stocktype" type="radio" value="High" v-model="type">
+  <label>high</label>
+  <input id="radio" name="stocktype" type="radio" value="Low" v-model="type">
+  <label>low</label>
+  <input id="radio" name="stocktype" type="radio" value="Close" v-model="type">
+  <label>close</label>
+  </p>
+
+  <p class="text"><input id="forms" type="text" placeholder="add new stock" v-model="brand" /></p>
+  <p class="submit"><button @click="getTimeSeries">submit</button></p>
 </aside>
   </div>
     <div class="column is-main-content">
     {% if current_user.is_authenticated %}
+        <div class="chart-container" stype="postion: relative; height:40; width:80">
         <canvas id="myChart"></canvas>
+        </div>
     {% else %}
         <h1 class="title">
             <li v-for="time in timeseries" :key="time.id">
@@ -45,27 +55,33 @@ vm = new Vue({
 	  timeseries:[],
       label:[],
       title:"",
-	  brand:"TSE/"
+	  brand:"TSE/",
+      type: "Open",
+      myChart: ""
     },
     methods:{
 	   getTimeSeries:function(){
 	   const path="http://localhost:5000/get_time";
-       console.log("aaaa");
        var brand = this.brand;
-       axios.get(path, {params:{brand: brand}})
+       var type = this.type;
+       axios.get(path, {params:{brand: brand, type: type}})
         .then(response=>{
             var obj = JSON.parse(response.data);
             this.timeseries = obj["data"];
             this.label = obj["index"];
-            console.log(this.label);
             this.title = this.brand;
             this.brand = "TSE/";
         })
-        .catch(err=>{alert("入力された内容かapiが間違っています!")});
+        .catch(err=>{
+            this.brand = "TSE/";
+            alert("入力された内容かapiが間違っています!");
+        });
         },
     },
     watch:{ title: function() {
       var ctx = document.getElementById('myChart').getContext('2d');
+      ctx.canvas.width = 600;
+      ctx.canvas.height = 300;
       var myChart = new Chart(ctx, {
       type: 'line',
       data: {
