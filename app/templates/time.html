@@ -27,6 +27,10 @@
   </p>
 
   <p class="text"><input id="forms" type="text" placeholder="add new stock" v-model="brand" /></p>
+
+  date range
+  <p><input type="date" v-model="start_date" v-bind:readonly="is_readonly"></input>~
+  <input type="date" v-model="end_date" v-bind:readonly="is_readonly"></input></p>
   <p class="submit"><button @click="getTimeSeries">submit</button></p>
 </aside>
   </div>
@@ -57,20 +61,30 @@ vm = new Vue({
       title:"",
 	  brand:"TSE/",
       type: "Open",
-      myChart: ""
+      myChart: "",
+      start_date: "2012-01-01",
+      end_date: "2017-01-01",
+      is_readonly: false
     },
     methods:{
 	   getTimeSeries:function(){
 	   const path="http://localhost:5000/get_time";
        var brand = this.brand;
        var type = this.type;
-       axios.get(path, {params:{brand: brand, type: type}})
+       axios.get(path, {
+           params:{
+               brand:this.brand,
+               type:this.type,
+               start_date:this.start_date,
+               end_date:this.end_date
+           }})
         .then(response=>{
             var obj = JSON.parse(response.data);
             this.timeseries = obj["data"];
             this.label = obj["index"];
             this.title = this.brand;
             this.brand = "TSE/";
+            this.is_readonly = true;
         })
         .catch(err=>{
             this.brand = "TSE/";
@@ -79,19 +93,29 @@ vm = new Vue({
         },
     },
     watch:{ title: function() {
-      var ctx = document.getElementById('myChart').getContext('2d');
-      ctx.canvas.width = 600;
-      ctx.canvas.height = 300;
-      var myChart = new Chart(ctx, {
-      type: 'line',
-      data: {
-          labels: this.label,
-          datasets: [{
-              label: this.title,
-              data: this.timeseries
-          }]
-        }
-      });
+      if (this.myChart == ""){
+          var ctx = document.getElementById('myChart').getContext('2d');
+          ctx.canvas.width = 600;
+          ctx.canvas.height = 300;
+          this.myChart = new Chart(ctx, {
+          type: 'line',
+          data: {
+              labels: this.label,
+              datasets: [{
+                  label: this.title,
+                  data: this.timeseries
+              }]
+            }
+          });
+      }else{
+          //this.myChart.data.labels.push(this.label);
+          //this.myChart.data.datasets.forEach((dataset) => {
+          //  dataset.data.push(this.timeseries);
+          //});
+          this.myChart.data.datasets.push({label:this.title,data:this.timeseries});
+          this.myChart.chart.update();
+          console.log(this.myChart.data);
+      }
     }
     }
 })
