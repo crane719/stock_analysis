@@ -15,6 +15,10 @@
   width: 90%;
 }
 
+#times{
+  width: 42%;
+}
+
 input[readonly] {
 	color: #417bbc;
 	background-color: #E2E8E7;

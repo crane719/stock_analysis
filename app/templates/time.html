@@ -25,15 +25,25 @@
   </p>
 
   <p class="text"><input id="forms" type="text" placeholder="add new stock" v-model="brand" /></p>
-  <p><input type="date" v-model="start_date" v-bind:readonly="is_readonly"></input>~
-  <input type="date" v-model="end_date" v-bind:readonly="is_readonly"></input></p>
+  <p><input type="date" v-model="start_date" v-bind:readonly="isReadonly" id="times"></input>~
+  <input type="date" v-model="end_date" v-bind:readonly="isReadonly" id="times"></input></p>
   <p class="submit"><button @click="getTimeSeries">add</button></p>
 
   <p class="menu-label">delete displayed stock...</p>
   <select id="select" v-model="deleteTitle">
-    <option v-for="title in deleteTitleList">{{title}}</option>
+    <option v-for="title in titleList">{{title}}</option>
   </select>
   <p class="submit"><button @click="deleteTimeSeries">delete</button></p>
+
+  <p class="menu-label">analyse stock...</p>
+
+  <select v-model="selectedAnalysis">
+      <option v-for="analysis in analysisList">{{analysis}}</option>
+  </select>
+  <select v-model="selectedPoint">
+      <option v-for="point in pointList" v-bind:readonly="isPointReadonly">{{point}}</option>
+  </select>
+  <p class="submit"><button @click="stockAnalysis">analyse</button></p>
 
   </aside>
   </div>
@@ -45,8 +55,6 @@
         </div>
     {% else %}
         <h1 class="title">
-            <li v-for="time in timeseries" :key="time.id">
-            </li>
             <font color="red">Warning</font>
         </h1>
         <h2 class="subtitle">
@@ -62,7 +70,7 @@ vm = new Vue({
     data: {
 	  timeseries:[],
       label:[],
-      deleteTitleList: [],
+      titleList: [],
       deleteTitle: "",
       title:"",
 	  brand:"TSE/",
@@ -70,9 +78,15 @@ vm = new Vue({
       myChart: "",
       start_date: "2012-01-01",
       end_date: "2017-01-01",
-      is_readonly: false
+      analysisList: ["movingAverage"],
+      selectedAnalysis: "movingAverage",
+      pointList: ["5pt", "25pt"],
+      selectedPoint: "25pt",
+      isReadonly: false,
+      isPointReadonly: false,
     },
     methods:{
+       // 時系列の取得
 	   getTimeSeries:function(){
 	   const path="http://localhost:5000/get_time";
        var brand = this.brand;
@@ -89,31 +103,69 @@ vm = new Vue({
             this.timeseries = obj["data"];
             this.label = obj["index"];
             this.title = this.brand+"("+this.type+")";
-            this.deleteTitleList.push(this.title);
+            this.titleList.push(this.title);
             this.brand = "TSE/";
-            this.is_readonly = true;
+            this.isReadonly = true;
         })
         .catch(err=>{
             this.brand = "TSE/";
             alert("入力された内容かapiが間違っています!");
         });
         },
+
+        // 時系列の削除
         deleteTimeSeries:function(){
             var deleteArg = 0;
-            console.log(this.deleteTitleList);
+            console.log(this.titleList);
             console.log(this.deleteTitle);
-            for(var iter=0; this.deleteTitleList.length; iter++){
-                if (this.deleteTitleList[iter]==this.deleteTitle){
+            for(var iter=0; this.titleList.length; iter++){
+                if (this.titleList[iter]==this.deleteTitle){
                     deleteArg=iter;
                     break;
                 }
             }
-            this.deleteTitleList.splice(deleteArg, 1);
+            this.titleList.splice(deleteArg, 1);
             this.myChart.data.datasets.splice(deleteArg, 1);
             this.myChart.chart.update();
         },
+
+        // 時系列の分析
+        stockAnalysis:function(){
+          // 移動平均が選択されていた場合
+          if (this.selectedAnalysis == "movingAverage") {
+            const path = "http://localhost:5000/moving_average";
+            var tmpDatas = [];
+            var tmpNames = [];
+
+            for(var i=0; i<this.myChart.data.datasets.length; i++){
+                tmpDatas.push(this.myChart.data.datasets[i].data);
+                tmpNames.push(this.myChart.data.datasets[i].label);
+            }
+            tmpDatas = {"point": this.selectedPoint, "datas": tmpDatas, "labels": tmpNames};
+
+            axios.post(path, tmpDatas)
+            .then(response=>{
+                var obj = response.data;
+                var key = Object.keys(obj);
+                var data = Object.values(obj);
+
+                console.log(key);
+                console.log(data);
+                for(i=0; i<key.length; i++){
+                  this.myChart.data.datasets.push({
+                      label:key[i],
+                      data:data[i],
+                      fill:false});
+                }
+                this.myChart.chart.update();
+            })
+            .catch(response=>{alert("問題が発生しました!!");});
+          };
+        },
     },
-    watch:{ title: function() {
+    watch:{
+      // 描画
+      title: function() {
       if (this.myChart == ""){
           var ctx = document.getElementById('myChart').getContext('2d');
           ctx.canvas.width = 600;
@@ -136,7 +188,15 @@ vm = new Vue({
               fill:false});
           this.myChart.chart.update();
       }
-    }
+      },
+      // formのreadonlyの管理
+      selectedAnalysis: function(){
+        if (selectedAnalysis=="movingAverage"){
+          isPointReadonly = false;
+        }else{
+          isPointReadonly = true;
+        }
+      }
     }
 })
 </script>
