@@ -16,3 +16,4 @@ python run.py
 ## function
 
 - 株価時系列の表示、削除
+- 株価の移動平均の取得
