@@ -136,11 +136,29 @@ vm = new Vue({
             const path = "http://localhost:5000/moving_average";
             var tmpDatas = [];
             var tmpNames = [];
+            var delNames = [];
 
-            for(var i=0; i<this.myChart.data.datasets.length; i++){
-                tmpDatas.push(this.myChart.data.datasets[i].data);
-                tmpNames.push(this.myChart.data.datasets[i].label);
-            }
+            // maが含まれている時系列から
+            for(var i=this.myChart.data.datasets.length-1; i>=0; i--){
+                var tmpName = this.myChart.data.datasets[i].label;
+                // 移動平均の時系列でない場合
+                if (tmpName.indexOf('ma') == -1) {
+                    // すでに移動平均をとっているかどうかの判定
+                    var isMA = false;
+                    for (var j=0; j<delNames.length; j++){
+                        if (tmpName+"ma"+this.selectedPoint == delNames[j]){
+                            isMA = true;
+                        };
+                    };
+                    if (!isMA){
+                      tmpDatas.push(this.myChart.data.datasets[i].data);
+                      tmpNames.push(tmpName);
+                    };
+                }else{
+                  delNames.push(tmpName);
+                }
+            };
+
             tmpDatas = {"point": this.selectedPoint, "datas": tmpDatas, "labels": tmpNames};
 
             axios.post(path, tmpDatas)
@@ -149,8 +167,6 @@ vm = new Vue({
                 var key = Object.keys(obj);
                 var data = Object.values(obj);
 
-                console.log(key);
-                console.log(data);
                 for(i=0; i<key.length; i++){
                   this.myChart.data.datasets.push({
                       label:key[i],

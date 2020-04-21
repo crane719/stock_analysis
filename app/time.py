@@ -39,6 +39,6 @@ def moving_average():
         datas["datas"] = [datas["datas"]]
     for key, data in zip(datas["labels"], datas["datas"]):
         data = finance.moving_average(data, point)
-        key += "ma%d"%(point)
+        key += "ma%dpt"%(point)
         tmp_datas[key] = data
     return jsonify(tmp_datas)
