@@ -126,6 +126,11 @@ vm = new Vue({
             }
             this.titleList.splice(deleteArg, 1);
             this.myChart.data.datasets.splice(deleteArg, 1);
+            // reset
+            if (this.myChart.data.datasets.length==0){
+              this.myChart.data.labels = [];
+              this.isReadonly = false;
+            }
             this.myChart.chart.update();
         },
 

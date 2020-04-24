@@ -9,6 +9,12 @@ pythonを用いて、quandl apiから、株価のデータを取得します。�
 4. api keyをメモ
 
 ## usage
+
+一回目だけ、
+```
+pip install -r requirements.txt
+```
+
 ```
 python run.py
 ```
